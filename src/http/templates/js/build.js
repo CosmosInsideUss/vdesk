@@ -26,7 +26,33 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var Menu = _react2.default.createClass({
   displayName: 'Menu',
   render: function render() {
-    return _react2.default.createElement(_lib.Navbar, null);
+    return _react2.default.createElement(
+      _lib.Navbar,
+      null,
+      _react2.default.createElement(
+        _lib.Navbar.Header,
+        null,
+        _react2.default.createElement(
+          _lib.Navbar.Brand,
+          null,
+          _react2.default.createElement(
+            'a',
+            { href: '#' },
+            'Vdesk'
+          )
+        )
+      ),
+      _react2.default.createElement(
+        _lib.Nav,
+        { pullRight: true },
+        _react2.default.createElement(
+          _lib.NavItem,
+          { eventKey: 1, href: '#' },
+          'Sair'
+        ),
+        _react2.default.createElement(_lib.NavItem, { eventKey: 2, href: '#' })
+      )
+    );
   }
 });
 var Layout = _react2.default.createClass({
@@ -55,7 +81,8 @@ var Layout = _react2.default.createClass({
         _react2.default.createElement(
           _lib.Col,
           { md: 9 },
-          _react2.default.createElement(TicketsTable, null)
+          _react2.default.createElement(TicketsTable, null),
+          _react2.default.createElement(MenuRight, null)
         )
       )
     );
@@ -131,11 +158,37 @@ var MenuLeft = _react2.default.createClass({
   }
 });
 
+var MenuRight = _react2.default.createClass({
+  displayName: 'MenuRight',
+  render: function render() {
+    return _react2.default.createElement(
+      _lib.Nav,
+      { bsStyle: 'pills', stacked: true, activeKey: 2 },
+      _react2.default.createElement(
+        _lib.NavItem,
+        { eventKey: 1, href: '/home' },
+        _react2.default.createElement(_fa.FaPieChart, null),
+        ' Graphs'
+      ),
+      _react2.default.createElement(
+        _lib.NavItem,
+        { eventKey: 1, href: '/home' },
+        _react2.default.createElement(_fa.FaSignOut, null),
+        ' Sair'
+      )
+    );
+  }
+});
+
+var columnStyle = {
+  columnWidth: '500px'
+};
 var TicketsTable = _react2.default.createClass({
   displayName: 'TicketsTable',
   getInitialState: function getInitialState() {
     return {
-      ticketsPendentes: []
+      ticketsPendentes: [],
+      ticketsUsuario: []
 
     };
   },
@@ -145,127 +198,387 @@ var TicketsTable = _react2.default.createClass({
     _axios2.default.get("/ticketsPendentes").then(function (response) {
       that.setState({ ticketsPendentes: response.data });
     });
+    _axios2.default.get("/ticketsUsuario").then(function (response) {
+      that.setState({ ticketsUsuario: response.data });
+    });
   },
   render: function render() {
     return _react2.default.createElement(
-      _lib.Table,
-      { striped: true, bordered: true, condensed: true, hover: true },
+      'div',
+      null,
       _react2.default.createElement(
-        'thead',
-        null,
+        _lib.Table,
+        { striped: true, bordered: true },
         _react2.default.createElement(
-          'tr',
+          'thead',
           null,
           _react2.default.createElement(
-            'th',
-            null,
-            'Id'
-          ),
-          _react2.default.createElement(
-            'th',
-            null,
-            'Descricao'
-          ),
-          _react2.default.createElement(
-            'th',
-            null,
-            'Aberto em'
-          ),
-          _react2.default.createElement(
-            'th',
-            null,
-            'Criado Por'
-          ),
-          _react2.default.createElement(
-            'th',
-            null,
-            'Status'
-          ),
-          _react2.default.createElement(
-            'th',
-            null,
-            'Sla'
-          ),
-          _react2.default.createElement(
-            'th',
-            null,
-            'Departamento'
-          ),
-          _react2.default.createElement(
-            'th',
-            null,
-            'Problema'
-          ),
-          _react2.default.createElement(
-            'th',
-            null,
-            'Acoes'
-          )
-        )
-      ),
-      _react2.default.createElement(
-        'tbody',
-        null,
-        this.state.ticketsPendentes.map(function (s) {
-
-          return _react2.default.createElement(
             'tr',
             null,
             _react2.default.createElement(
-              'td',
+              'th',
               null,
-              s.Id
+              'Id'
             ),
             _react2.default.createElement(
-              'td',
+              'th',
               null,
-              s.Descricao
+              'Descricao'
             ),
             _react2.default.createElement(
-              'td',
+              'th',
               null,
-              s.AbertoEm
+              'Aberto em'
             ),
             _react2.default.createElement(
-              'td',
+              'th',
               null,
-              s.CriadoPor
+              'Solicitante'
             ),
             _react2.default.createElement(
-              'td',
+              'th',
               null,
-              s.Status
+              'Status'
             ),
             _react2.default.createElement(
-              'td',
+              'th',
               null,
-              s.Sla
+              'Sla'
             ),
             _react2.default.createElement(
-              'td',
+              'th',
               null,
-              s.Departamento
+              'Departamento'
             ),
             _react2.default.createElement(
-              'td',
+              'th',
               null,
-              s.Problema
+              'Problema'
             ),
             _react2.default.createElement(
-              'td',
+              'th',
+              { style: columnStyle },
+              'Acoes'
+            )
+          )
+        ),
+        _react2.default.createElement(
+          'tbody',
+          null,
+          this.state.ticketsPendentes.map(function (s) {
+
+            return _react2.default.createElement(
+              'tr',
               null,
               _react2.default.createElement(
-                _Button2.default,
+                'td',
                 null,
-                'Ver'
+                s.Id
+              ),
+              _react2.default.createElement(
+                'td',
+                null,
+                s.Descricao
+              ),
+              _react2.default.createElement(
+                'td',
+                null,
+                s.AbertoEm
+              ),
+              _react2.default.createElement(
+                'td',
+                null,
+                s.Solicitante_id.Nome
+              ),
+              _react2.default.createElement(
+                'td',
+                null,
+                s.Status_id.Valor
+              ),
+              _react2.default.createElement(
+                'td',
+                null,
+                s.Sla_id.Valor
+              ),
+              _react2.default.createElement(
+                'td',
+                null,
+                s.Departamento_id.Nome
+              ),
+              _react2.default.createElement(
+                'td',
+                null,
+                s.Problema_id.Valor
+              ),
+              _react2.default.createElement(
+                'td',
+                { style: columnStyle },
+                _react2.default.createElement(
+                  _Button2.default,
+                  { bsStyle: 'success' },
+                  'Pegar'
+                ),
+                _react2.default.createElement(DialogTicket, { type: 1, id: s.Id, descricao: s.Descricao, abertura: s.AbertoEm, status: s.Status_id.Valor, sla: s.Sla_id.Valor, departamento: s.Departamento_id.Nome })
               )
+            );
+          })
+        )
+      ),
+      _react2.default.createElement(
+        'h4',
+        null,
+        'System table'
+      ),
+      _react2.default.createElement(
+        _lib.Table,
+        { striped: true, bordered: true, condensed: true, hover: true },
+        _react2.default.createElement(
+          'thead',
+          null,
+          _react2.default.createElement(
+            'tr',
+            null,
+            _react2.default.createElement(
+              'th',
+              null,
+              'Id'
+            ),
+            _react2.default.createElement(
+              'th',
+              null,
+              'Descricao'
+            ),
+            _react2.default.createElement(
+              'th',
+              null,
+              'Aberto em'
+            ),
+            _react2.default.createElement(
+              'th',
+              null,
+              'Criado Por'
+            ),
+            _react2.default.createElement(
+              'th',
+              null,
+              'Status'
+            ),
+            _react2.default.createElement(
+              'th',
+              null,
+              'Sla'
+            ),
+            _react2.default.createElement(
+              'th',
+              null,
+              'Departamento'
+            ),
+            _react2.default.createElement(
+              'th',
+              null,
+              'Problema'
+            ),
+            _react2.default.createElement(
+              'th',
+              null,
+              'Acoes'
             )
-          );
-        })
+          )
+        ),
+        _react2.default.createElement(
+          'tbody',
+          null,
+          this.state.ticketsUsuario.map(function (s) {
+
+            return _react2.default.createElement(
+              'tr',
+              null,
+              _react2.default.createElement(
+                'td',
+                null,
+                s.Id
+              ),
+              _react2.default.createElement(
+                'td',
+                null,
+                s.Descricao
+              ),
+              _react2.default.createElement(
+                'td',
+                null,
+                s.AbertoEm
+              ),
+              _react2.default.createElement(
+                'td',
+                null,
+                s.Solicitante_id.Nome
+              ),
+              _react2.default.createElement(
+                'td',
+                null,
+                s.Status_id.Valor
+              ),
+              _react2.default.createElement(
+                'td',
+                null,
+                s.Sla_id.Valor
+              ),
+              _react2.default.createElement(
+                'td',
+                null,
+                s.Departamento_id.Nome
+              ),
+              _react2.default.createElement(
+                'td',
+                null,
+                s.Problema_id.Valor
+              ),
+              _react2.default.createElement(
+                'td',
+                null,
+                _react2.default.createElement(DialogTicket, { type: 2, id: s.Id, descricao: s.Descricao, abertura: s.AbertoEm, status: s.Status_id.Valor, sla: s.Sla_id.Valor, departamento: s.Departamento_id.Nome }),
+                _react2.default.createElement(
+                  _Button2.default,
+                  { bsStyle: 'danger' },
+                  'Fechar'
+                )
+              )
+            );
+          })
+        )
       )
     );
   }
 });
+
+var DialogTicket = _react2.default.createClass({
+  displayName: 'DialogTicket',
+  getInitialState: function getInitialState() {
+    return { showModal: false };
+  },
+  close: function close() {
+    this.setState({ showModal: false });
+    this.setState({ disabled: true });
+  },
+  open: function open() {
+    this.setState({ showModal: true });
+  },
+  botoes: function botoes() {
+    var p = this.props.type;
+
+    if (this.props.type == 1) {
+      return _react2.default.createElement(
+        _Button2.default,
+        { bsStyle: 'success', onClick: this.close },
+        'Pegar'
+      );
+    } else {
+      return _react2.default.createElement(
+        _Button2.default,
+        { bsStyle: 'warning', onClick: this.close },
+        'Encerrar'
+      );
+    }
+  },
+  render: function render() {
+    return _react2.default.createElement(
+      'div',
+      null,
+      _react2.default.createElement(
+        _Button2.default,
+        { bsStyle: 'primary', onClick: this.open },
+        _react2.default.createElement(_fa.FaEye, null)
+      ),
+      _react2.default.createElement(
+        _lib.Modal,
+        { show: this.state.showModal, onHide: this.close },
+        _react2.default.createElement(
+          _lib.Modal.Header,
+          null,
+          ' Ticket => ',
+          this.props.id,
+          ' '
+        ),
+        _react2.default.createElement(
+          _lib.Grid,
+          null,
+          _react2.default.createElement(
+            _lib.Row,
+            { className: 'show-grid' },
+            _react2.default.createElement(
+              _lib.Col,
+              { md: 1 },
+              _react2.default.createElement(_fa.FaCheck, null),
+              ' => ',
+              this.props.id
+            ),
+            _react2.default.createElement(
+              _lib.Col,
+              { md: 2 },
+              _react2.default.createElement(_fa.FaBuildingO, null),
+              ' =>                ',
+              this.props.departamento
+            ),
+            _react2.default.createElement(
+              _lib.Col,
+              { md: 3 },
+              _react2.default.createElement(_fa.FaClockO, null),
+              ' => ',
+              this.props.abertura
+            )
+          ),
+          _react2.default.createElement(
+            _lib.Row,
+            { className: 'show-grid' },
+            _react2.default.createElement(
+              _lib.Col,
+              { md: 2 },
+              _react2.default.createElement(_fa.FaExchange, null),
+              ' => ',
+              this.props.status
+            ),
+            _react2.default.createElement(
+              _lib.Col,
+              { md: 2 },
+              _react2.default.createElement(_fa.FaFlag, null),
+              ' => ',
+              this.props.sla
+            )
+          ),
+          _react2.default.createElement(
+            _lib.Row,
+            { className: 'show-grid' },
+            _react2.default.createElement(
+              _lib.Col,
+              { md: 4 },
+              _react2.default.createElement('br', null),
+              ' ',
+              _react2.default.createElement(_fa.FaFileText, null),
+              ' => ',
+              this.props.descricao
+            )
+          )
+        ),
+        _react2.default.createElement(
+          _lib.Modal.Footer,
+          null,
+          _react2.default.createElement(
+            _Button2.default,
+            { bsStyle: 'danger', onClick: this.close },
+            'Fechar'
+          ),
+          _react2.default.createElement(
+            _Button2.default,
+            { bsStyle: 'danger', onClick: this.input },
+            'Editar'
+          ),
+          this.botoes()
+        )
+      )
+    );
+  }
+});
+
 _reactDom2.default.render(_react2.default.createElement(Layout, null), document.getElementById("layout"));
 
 },{"axios":2,"react":1090,"react-bootstrap/lib":113,"react-bootstrap/lib/Button":32,"react-dom":280,"react-icons/lib/fa":754}],2:[function(require,module,exports){

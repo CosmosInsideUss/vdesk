@@ -1,54 +1,78 @@
 package ticket
 
 import (
-	_ "../../Db"
-	_ "../departamento"
+	db "../../Db"
+	//"database/sql"
+	departamento "../departamento"
+	tipoproblema "../problema"
+	sla "../sla"
+	ticketstatus "../ticketStatus"
+	usuario "../usuario"
+	"time"
 )
 
 type Ticket struct {
-	Id        int
-	Descricao string
-	AbertoEm  string
-	// FechadoEm    string
-	// CriadoPor    string
-	// EditadoPor   string
-	// Status       string
-	// Solicitante  string
-	// Sla          string
-	// Solucao      string
-	// Usuario      string
-	// Departamento []d.Departamento
-	// Problema     string
-	// Tipo         string
+	Id              int
+	Descricao       string
+	AbertoEm        time.Time
+	FechadoEm       time.Time
+	Status_id       ticketstatus.TicketStatus
+	Solicitante_id  usuario.Usuario
+	Sla_id          sla.Sla
+	Solucao         string
+	Usuario_id      usuario.Usuario
+	Departamento_id departamento.Departamento
+	Problema_id     tipoproblema.TipoProblema
 }
 
-func BuscaTodos() []Ticket {
+func Pendentes() []Ticket {
 
-	t := []Ticket{{1, "teste", "hoje"}, {2, "teste2", "ontem"}}
-	// ticketsAll, _ := db.CONEXAO.Query("select t.id, t.descricao, t.abertoem, u.nome as criadopor,d.nome as departamento," +
-	// 	" s.valor as sla, st.valor as status, p.valor as problema from ticket t  join usuario u on t.criadopor_id = u.id " +
-	// 	"join sla s on t.sla_id = s.id join departamento d on t.departamento_id = d.id join ticketstatus st on t.status_id = st.id " +
-	// 	"join tipoproblema p on t.problema_id = p.id")
-	// defer ticketsAll.Close()
-	// departamentosAll, _ := db.CONEXAO.Query("select id, nome from departamento")
-	// defer departamentosAll.Close()
-	// tickets := []Ticket{}
-	// for ticketsAll.Next() {
-	// 	ticket := Ticket{}
-	// 	departamento := d.Departamento{}
-	// 	ticketsAll.Scan(&ticket.Id, &ticket.Descricao, &ticket.AbertoEm, &ticket.CriadoPor, &ticket.Departamento, &ticket.Sla, &ticket.Status, &ticket.Problema)
-	// 	departamentosAll.Scan(&departamento.Id, &departamento.Nome)
-	// 	ticket.Departamento = append(ticket.Departamento, departamento)
-	// 	tickets = append(tickets, ticket)
-	// }
-	return t
+	rows, err := db.Conexao.Query("select t.id,t.descricao, t.abertoem, " +
+		"s.*, sol.id, sol.nome, " +
+		"sla.id, sla.valor, " +
+		"u.id, u.nome, " +
+		"d.id, d.nome, " +
+		"p.id, p.valor " +
+		"from ticket t join ticketstatus s on t.status_id = s.id join usuario sol on t.solicitante_id = sol.id join slas sla on t.sla_id = sla.id join usuario u on t.usuario_id = u.id join departamento d on t.departamento_id = d.id join tipoproblema p on t.problema_id = p.id where u.id = 1")
+
+	if err != nil {
+		panic(err)
+	}
+	defer rows.Close()
+
+	tickets := []Ticket{}
+	for rows.Next() {
+		t := Ticket{}
+		rows.Scan(&t.Id, &t.Descricao, &t.AbertoEm, &t.Status_id.Id, &t.Status_id.Valor, &t.Solicitante_id.Id, &t.Solicitante_id.Nome, &t.Sla_id.Id, &t.Sla_id.Valor, &t.Usuario_id.Id, &t.Usuario_id.Nome, &t.Departamento_id.Id, &t.Departamento_id.Nome, &t.Problema_id.Id, &t.Problema_id.Valor)
+		tickets = append(tickets, t)
+	}
+
+	return tickets
+
 }
 
-// func porId(id string) Ticket {
-// 	u := Ticket{}
-// 	err := db.CONEXAO.QueryRow("select id from Ticket where id = $1", id).Scan(&u.Id)
-// 	if err != nil {
-// 		fmt.Println(err)
-// 	}
-// 	return u
-// }
+func PorUsuario() []Ticket {
+
+	rows, err := db.Conexao.Query("select t.id,t.descricao, t.abertoem, " +
+		"s.*, sol.id, sol.nome, " +
+		"sla.id, sla.valor, " +
+		"u.id, u.nome, " +
+		"d.id, d.nome, " +
+		"p.id, p.valor " +
+		"from ticket t join ticketstatus s on t.status_id = s.id join usuario sol on t.solicitante_id = sol.id join slas sla on t.sla_id = sla.id join usuario u on t.usuario_id = u.id join departamento d on t.departamento_id = d.id join tipoproblema p on t.problema_id = p.id where u.id = 2")
+
+	if err != nil {
+		panic(err)
+	}
+	defer rows.Close()
+
+	tickets := []Ticket{}
+	for rows.Next() {
+		t := Ticket{}
+		rows.Scan(&t.Id, &t.Descricao, &t.AbertoEm, &t.Status_id.Id, &t.Status_id.Valor, &t.Solicitante_id.Id, &t.Solicitante_id.Nome, &t.Sla_id.Id, &t.Sla_id.Valor, &t.Usuario_id.Id, &t.Usuario_id.Nome, &t.Departamento_id.Id, &t.Departamento_id.Nome, &t.Problema_id.Id, &t.Problema_id.Valor)
+		tickets = append(tickets, t)
+	}
+
+	return tickets
+
+}

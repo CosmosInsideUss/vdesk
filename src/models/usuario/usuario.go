@@ -1,38 +1,35 @@
 package usuario
 
 import (
-	_ "../../Db"
-	_ "fmt"
+	db "../../Db"
+	departamento "../departamento"
 )
 
 type Usuario struct {
-	Id           int
-	Nome         string
-	Email        string
-	Senha        string
-	Idade        int
-	Departamento string
+	Id              int
+	Nome            string
+	Email           string
+	Senha           string
+	Idade           int
+	Departamento_id departamento.Departamento
 }
 
-// func BuscaTodos() []Usuario {
-// 	rows, _ := db.CONEXAO.Query("select u.id, u.nome, u.email, u.idade, u.senha, d.nome " +
-// 		"as departamento from usuario u join departamento d on u.departamento_id = d.id ORDER BY u.id ASC")
-// 	// if err != nil {
+func BuscaTodos() []Usuario {
+	rows, err := db.Conexao.Query("select u.id, u.nome, u.email, u.idade, d.id, d.nome from usuario u join departamento d on u.departamento_id = d.id")
+	if err != nil {
 
-// 	// 	panic(err)
-// 	// }
-// 	defer rows.Close()
-// 	users := []Usuario{}
-// 	for rows.Next() {
-// 		u := Usuario{}
-// 		if err := rows.Scan(&u.Id, &u.Nome, &u.Email, &u.Idade, &u.Senha, &u.Departamento); err != nil {
-// 			panic(err)
-// 		}
-// 		users = append(users, u)
-// 	}
-// 	return users
+		panic(err)
+	}
+	defer rows.Close()
+	users := []Usuario{}
+	for rows.Next() {
+		u := Usuario{}
+		rows.Scan(&u.Id, &u.Nome, &u.Email, &u.Idade, &u.Departamento_id.Id, &u.Departamento_id.Nome)
+		users = append(users, u)
+	}
+	return users
 
-// }
+}
 
 // func PorId(id string) Usuario {
 // 	u := Usuario{}
