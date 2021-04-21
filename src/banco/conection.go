@@ -1,7 +1,8 @@
-package Db
+package banco
 
 import (
 	"database/sql"
+
 	_ "github.com/lib/pq"
 )
 
