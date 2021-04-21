@@ -1,21 +1,19 @@
-package usuario
+package models
 
 import (
 	db "../../Db"
-	departamento "../departamento"
 )
 
 type Usuario struct {
-	Id              int
-	Nome            string
-	Email           string
-	Senha           string
-	Idade           int
-	Departamento_id departamento.Departamento
+	Id    int
+	Nome  string
+	Email string
+	Senha string
+	Idade int
 }
 
 func BuscaTodos() []Usuario {
-	rows, err := db.Conexao.Query("select u.id, u.nome, u.email, u.idade, d.id, d.nome from usuario u join departamento d on u.departamento_id = d.id")
+	rows, err := db.Conexao.Query("select u.id, u.nome, u.email, u.idade, d.id, d.nome from usuario")
 	if err != nil {
 
 		panic(err)
@@ -24,7 +22,7 @@ func BuscaTodos() []Usuario {
 	users := []Usuario{}
 	for rows.Next() {
 		u := Usuario{}
-		rows.Scan(&u.Id, &u.Nome, &u.Email, &u.Idade, &u.Departamento_id.Id, &u.Departamento_id.Nome)
+		rows.Scan(&u.Id, &u.Nome, &u.Email, &u.Idade)
 		users = append(users, u)
 	}
 	return users
